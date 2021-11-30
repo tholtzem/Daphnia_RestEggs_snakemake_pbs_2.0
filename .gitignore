@@ -36,6 +36,8 @@ ref/*
 *.R*
 *.snakemake/
 list/*
+*stats*
+*hist*
 
 angsd/*
 pcangsd/*
