@@ -13,6 +13,8 @@ raw/qc/multiqc/*
 realigned/*
 ref/*
 
+GLs.md
+
 *.fastq*
 *.fq*
 *.fastqc*
