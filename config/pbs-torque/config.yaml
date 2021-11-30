@@ -1,0 +1,11 @@
+cluster-config: "config/pbs-torque/cluster.yaml"
+cluster: "qsub -N {cluster.jobname} -l ncpus={cluster.ncpus},mem={cluster.mem},walltime={cluster.walltime} -q {cluster.queue} -M {cluster.email} -m {cluster.mailon} -j {cluster.jobout} -o {cluster.outdir} "
+jobs: 2000
+verbose: true
+notemp: true
+restart-times: 3
+latency-wait: 60
+rerun-incomplete: true
+#cluster: "qsub -N {cluster.jobname} -l nodes={cluster.nodes}:ppn={cluster.ppn},pmem={cluster.pmem},walltime={cluster.walltime} -M {cluster.email} -m {cluster.mailon} -j {cluster.jobout} -o {cluster.outdir} -V "
+#-A {cluster.account} -q {cluster.queue}    qos={cluster.qos}
+
