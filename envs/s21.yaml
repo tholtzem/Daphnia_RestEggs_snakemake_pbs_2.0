@@ -1,0 +1,44 @@
+name: eggs2.0 
+channels:
+  - conda-forge
+  - bioconda
+  - r
+    #- jonaszierer
+dependencies:
+  - mamba
+  - ipython
+  - python
+  - snakemake-minimal=6.5.2
+  - matplotlib
+  - numpy
+  - graphviz
+  - pigz
+  - pandas
+  - git
+# Rstats
+  - r-base
+  - r-devtools
+  - bioconductor-sushi
+  - r-tidyverse
+  - r-ggplot2
+  - r-gridgraphics
+  - r-gridextra
+  - r-ggrepel
+  - r-viridis
+
+#WGS preprocessing
+  - fastqc
+  - multiqc
+  - kraken2
+  - bbmap=38.93-0
+  - samtools
+  - htslib
+  - bcftools
+  - sambamba=0.6.8
+  - pixy=1.0.4.beta1
+  - picard=2.25.0-0
+  - bedtools=2.30.0
+  - gatk=3.8 
+  - bamutil=1.0.15-0
+    #- angsd=0.935
+  - angsd=0.921

@@ -1,0 +1,29 @@
+#! /bin/bash
+
+# Redirect output stream to this file.
+#PBS -o read_depth_MM.o
+
+# Redirect error stream to this file.
+#PBS -e read_depth_MM.e
+
+#Name of the job
+#PBS -N depth
+
+##PBS -q f2100 
+
+# Send status information to this email address.
+#PBS -M Markus.Moest@uibk.ac.at
+
+# Send an e-mail when the job is done.
+#PBS -m e
+
+#PBS -l select=1:ncpus=12:mem=120g
+#PBS -l walltime=120:00:00
+
+module load Anaconda3/2021.04/miniconda-base-2021.04
+source $UIBK_CONDA_PROFILE
+conda activate mmR
+
+cd $PBS_O_WORKDIR
+
+R CMD BATCH /home/uibk/c7701125/scripts/read_depth_R.R

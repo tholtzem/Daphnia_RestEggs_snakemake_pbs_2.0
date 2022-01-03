@@ -1,0 +1,41 @@
+__default__:
+  jobname: "{rule}.{wildcards}"
+  ncpus: 12
+  mem: "120gb"
+  walltime: "120:00:00"
+  #qos: "flux"
+  queue: "f2800"
+  account: "c7701178"
+  email: "tania.holtzem@hotmail.de"
+  mailon: "bea"
+  jobout: "oe"
+  outdir: "code/log/"
+
+  #nodes: 1
+  #ppn: 12
+
+kraken2:
+  ncpus: 12
+  mem: "120gb"
+  walltime: "72:00:00"
+
+bbmap:
+  ncpus: 24
+  mem: "240gb"
+  walltime: "72:00:00"
+
+#angsd_GL2:
+#  ncpus: 24
+#  mem: "240gb"
+#  walltime: "72:00:00"
+#
+#run_ngsLD:
+#  ncpus: 24
+#  mem: "240gb"
+#  walltime: "72:00:00"
+
+#angsd_GL2_LDpruned:
+#  ncpus: 24
+#  mem: "240gb"
+#  walltime: "72:00:00"
+#

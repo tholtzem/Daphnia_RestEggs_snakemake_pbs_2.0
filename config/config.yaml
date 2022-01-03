@@ -1,0 +1,21 @@
+# Files
+
+## For trimming using bbduk 
+adapters: "/home/uibk/c7701178/local/bio/bbmap/resources/adapters.fa"
+phiX: "/home/uibk/c7701178/local/bio/bbmap/resources/phix174_ill.ref.fa.gz"
+
+## Kraken2 database
+KRAKEN2_DB: "/mach2/scratch/uibk/c7701125/EXCHANGE/K2DB_DAPH/"
+
+## Rapid assembly (https://www.biorxiv.org/content/10.1101/2021.02.01.429177v1)
+#ref_rapid: "/home/uibk/c7701178/scratch/DAPHNIA/Daphnia_RestEggs_snakemake_pbs_2.0/ref/CAJNAO01.fasta"
+ref_rapid: "/home/uibk/c7701178/scratch/DAPHNIA/Daphnia_RestEggs_snakemake_pbs_2.0/ref/dgal_ra_pb-target-and-other_ill-confilter.blobfilter.rmmt_sspace-lr3_lrgc3_pg3_pilon_3.simple.fasta"
+
+## Canu assembly (Stuart Dennis)
+ref_canu: "/home/uibk/c7701178/scratch/DAPHNIA/Daphnia_RestEggs_snakemake_pbs_2.0/ref/Dgal_v1.0_canu_best.fasta"
+
+## Flye assembly (Stuart Dennis)
+ref_flye: "/home/uibk/c7701178/scratch/DAPHNIA/Daphnia_RestEggs_snakemake_pbs_2.0/ref/Dgal_v1.0_flye_best.fasta"
+
+## D. longispina draft genome
+ref_long: "/home/uibk/c7701178/scratch/DAPHNIA/Daphnia_RestEggs_snakemake_pbs_2.0/ref/D_longispina_23082016.fasta"
