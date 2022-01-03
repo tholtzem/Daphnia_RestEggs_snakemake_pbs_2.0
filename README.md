@@ -1,4 +1,4 @@
-# Daphnia_RestEggs_snakemake_pbs
+# Daphnia_RestEggs_snakemake_pbs_2.0
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥5.6.0-brightgreen.svg?style=flat)](https://snakemake.readthedocs.io)
 
