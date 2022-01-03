@@ -39,7 +39,7 @@ samples*.txt
 list/*
 *stats*
 *hist*
-*txt
+daphnia*
 
 angsd/*
 pcangsd/*
