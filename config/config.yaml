@@ -11,6 +11,7 @@ KRAKEN2_DB: "/mach2/scratch/uibk/c7701125/EXCHANGE/K2DB_DAPH/"
 #ref_rapid: "/home/uibk/c7701178/scratch/DAPHNIA/Daphnia_RestEggs_snakemake_pbs_2.0/ref/CAJNAO01.fasta"
 ref_rapid: "/home/uibk/c7701178/scratch/DAPHNIA/Daphnia_RestEggs_snakemake_pbs_2.0/ref/dgal_ra_pb-target-and-other_ill-confilter.blobfilter.rmmt_sspace-lr3_lrgc3_pg3_pilon_3.simple.fasta"
 
+ref_HiC:
 ## Canu assembly (Stuart Dennis)
 ref_canu: "/home/uibk/c7701178/scratch/DAPHNIA/Daphnia_RestEggs_snakemake_pbs_2.0/ref/Dgal_v1.0_canu_best.fasta"
 

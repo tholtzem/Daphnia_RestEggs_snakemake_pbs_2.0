@@ -2,7 +2,7 @@ rule PCAngsd_admix:
   input:
     'angsd/angsd_LC_GL2_maf0018_LDpruned.done'
   output:
-    touch('pcangsd/PCAngsd_GL2_maf0018_LDpruned_admix_K3.done')
+    touch('pcangsd/PCAngsd_GL2_maf0018_LDpruned_admix_K{K}.done')
   log: 'log/PCAngsd_GL2_maf0018_LDpruned_admix_K3.log'
   threads: 12 
   message:

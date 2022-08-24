@@ -30,8 +30,8 @@ rule read_depth:
     #test.list
   output:
     #pdf = "some.pdf"
-    touch('genome_stats.done')
-  log: 'log/genome_stats.done.log'
+    touch('genome_stats_outgroup.done')
+  log: 'log/genome_stats_outgroup.done.log'
   threads: 12
   message:
     """ Running Rscript to plot the genome-wide distribution of coverage """

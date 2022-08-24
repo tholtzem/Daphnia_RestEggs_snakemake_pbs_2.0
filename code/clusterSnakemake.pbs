@@ -14,8 +14,8 @@
 ####    type, too.
 
 ###PBS -l nodes=2:ppn=12,pmem=4000mb
-#PBS -l select=1:mem=240gb:ncpus=24
-#PBS -l walltime=120:00:00
+#PBS -l select=1:mem=120gb:ncpus=12
+#PBS -l walltime=240:00:00
 ##PBS -l qos=flux
 
 ####  Flux account and queue specification here
@@ -24,7 +24,7 @@
 ####    or if you use software that is restricted to campus use.
 
 ###PBS -A c7701178
-#PBS -q f2800	
+#PBS -q f2100	
 ##fluxod
 
 #### #### ####  These are the least frequently changing options
@@ -85,7 +85,7 @@ fi
 
 # Initiating snakemake and running workflow in cluster mode
 #snakemake --use-envmodules --profile config/pbs-torque/ --latency-wait 900 --restart-times 3 --rerun-incomplete
-snakemake --use-envmodules --profile config/pbs-torque/ --latency-wait 900 --force-use-threads
+snakemake --use-envmodules --profile config/pbs-torque/ --latency-wait 20 --restart-times 4 --jobscript code/load_condaenv.sh
 
 # Printing out job summary
 qstat -f $PBS_JOBID

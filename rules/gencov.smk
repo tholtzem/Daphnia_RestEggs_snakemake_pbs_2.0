@@ -4,6 +4,7 @@ rule genome_coverage_bed:
     'realigned/{sample}.realigned.bam'
   output:
     'bedtools/{sample}.realigned.genomecov.bed'
+  log: 'log/{sample}.realigned.genomecov.log'
   threads: 12
   message:
     """ Computes BED summaries using bedtools """
@@ -17,7 +18,7 @@ rule plot_gencov:
   input:
     bed= 'bedtools/{sample}.realigned.genomecov.bed'
   output:
-    pdf = "bedtools/plots/{sample}.realigned.genomecov.pdf"
+    pdf = 'bedtools/plots/{sample}.realigned.genomecov.pdf'
   threads: 4
   message:
     """ Running Rscript to plot the genome-wide distribution of coverage """
