@@ -1,0 +1,90 @@
+__default__:
+  jobname: "{rule}.{wildcards}"
+  ncpus: 12
+  mem: "120gb"
+  walltime: "12:00:00"
+  #qos: "flux"
+  queue: "f2100"
+  account: "cxxxxxxx"
+  email: "email@"
+  mailon: "n"
+  jobout: "oe"
+  outdir: "code/log/"
+
+  #nodes: 1
+  #ppn: 12
+
+kraken2:
+  ncpus: 12
+  mem: "120gb"
+  walltime: "72:00:00"
+
+bbmap:
+  ncpus: 24
+  mem: "240gb"
+  walltime: "72:00:00"
+
+list_indels:
+  ncpus: 48
+  mem: "480gb"
+  walltime: "240:00:00"
+
+#angsd_GL2:
+#  ncpus: 36
+#  mem: "360gb"
+#  walltime: "240:00:00"
+
+get_beagle_allSNPs:
+  ncpus: 24
+  mem: "240gb"
+  walltime: "240:00:00"
+
+PCAngsd_covmat:
+  ncpus: 24
+  mem: "240gb"
+  walltime: "120:00:00"
+
+PCAngsd_admix_unpruned:
+  ncpus: 24
+  mem: "240gb"
+  walltime: "120:00:00"
+
+run_ngsLD:
+  ncpus: 36
+  mem: "360gb"
+  walltime: "120:00:00"
+
+getbeagle_LDpruned:
+  ncpus: 24
+  mem: "240gb"
+  walltime: "240:00:00"
+
+PCAngsd_LDpruned:
+  ncpus: 24
+  mem: "240gb"
+  walltime: "48:00:00"
+
+PCAngsd_admix_LD:
+  ncpus: 24
+  mem: "240gb"
+  walltime: "48:00:00"
+
+theta_stat_chrom:
+  ncpus: 12
+  mem: "120gb"
+  walltime: "6:00:00"
+
+theta_stat_SW:
+  ncpus: 12
+  mem: "120gb"
+  walltime: "6:00:00"
+
+Fst_index:
+  ncpus: 12
+  mem: "120gb"
+  walltime: "24:00:00"
+
+Fst_global:
+  ncpus: 24
+  mem: "240gb"
+  walltime: "24:00:00"
