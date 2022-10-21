@@ -4,6 +4,8 @@ notes.md
 *.fastq*
 *.fq*
 *.fastqc*
+raw/qc/multiqc/*
+trm/qc/multiqc/*
 *.html
 *.zip
 *.fasta*
@@ -19,6 +21,8 @@ notes.md
 *.ER
 *.cov
 *.args
+*.arg
+*.npy
 *.beagle.gz
 *.mafs.gz
 *.R*
