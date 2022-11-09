@@ -57,14 +57,14 @@ rule all:
 		#expand('pcangsd/{sets}/PCAngsd_LDpruned_angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}_admix_K{K}.done', sets=['LC_withoutREF'], GL=['2'], IND=['177'], minMaf=['0.05'], MinDepth=['177'], MaxDepth=['8091'], K=admix_K),
                 #expand('saf/saf_samples/{sample}.GL2.saf.idx.done', sample=saf_prefix)#,
                 #expand('saf/saf_samples/{sample}.GL2.est.ml', sample=saf_prefix),
-                expand('saf/POPS/df_{POPS}.GL2.saf.idx.done', POPS=['REF_long', 'REF_gal', 'REF_cuc', 'PRE_long', 'POST_long_LC']),
-		expand('saf/POPS/df_{POPS}.GL2.sfs', POPS=['REF_long', 'REF_gal', 'REF_cuc', 'PRE_long', 'POST_long_LC']),
-                expand('saf/POPS/df_{POPS}.sfs2theta.done', POPS=['REF_long', 'REF_gal', 'REF_cuc', 'PRE_long', 'POST_long_LC']),
-                expand('saf/POPS/df_{POPS}.theta_stats_chrom.done', POPS=['REF_long', 'REF_gal', 'REF_cuc', 'PRE_long', 'POST_long_LC']),
-                expand('saf/POPS/df_{POPS}.theta_stats_SW.done', POPS=['REF_long', 'REF_gal', 'REF_cuc', 'PRE_long', 'POST_long_LC']),
-                expand('saf/POPS/{POP1}_vs_{POP2}_2D.sfs', zip, POP1=POP1, POP2=PO,
-                #expand('saf/POPS/{pop_pair}.FstIndex.done', pop_pair=['PRElong_LClong', 'PRElong_ALLlong']),
-                #expand('saf/POPS/{pop_pair}.Fst_Global.done', pop_pair=['PRElong_LClong', 'PRElong_ALLlong'])
+                expand('saf/POPS/df_{POPS}.{ext}', POPS=['REF_long', 'REF_gal', 'REF_cuc', 'PRE_long', 'POST_long_LC'], ext=['GL2.saf.idx.done']),
+		expand('saf/POPS/df_{POPS}.{ext}', POPS=['REF_long', 'REF_gal', 'REF_cuc', 'PRE_long', 'POST_long_LC'], ext=['GL2.sfs']),
+                expand('saf/POPS/df_{POPS}.{ext}', POPS=['REF_long', 'REF_gal', 'REF_cuc', 'PRE_long', 'POST_long_LC'], ext=['sfs2theta.done']),
+                expand('saf/POPS/df_{POPS}.{ext}', POPS=['REF_long', 'REF_gal', 'REF_cuc', 'PRE_long', 'POST_long_LC'], ext=['theta_stats_chrom.done']),
+                expand('saf/POPS/df_{POPS}.{ext}', POPS=['REF_long', 'REF_gal', 'REF_cuc', 'PRE_long', 'POST_long_LC'], ext=['theta.thetasWindow10kb.gz']),
+                expand('saf/POPS/{POP1}_vs_{POP2}_2D.sfs', zip, POP1=POP1, POP2=POP2),
+                expand('saf/POPS/{POP1}_vs_{POP2}.FstIndex.done', zip, POP1=POP1, POP2=POP2),
+                expand('saf/POPS/{POP1}_vs_{POP2}.Fst_Global.done', zip, POP1=POP1, POP2=POP2)
                 #expand('saf/{sample}.heterozygosity.txt', sample=sample_prefix)
                 #expand('angsd/{sample}.GL2.est.ml', sample=BAM),
                 #expand('test_angsd935.done')

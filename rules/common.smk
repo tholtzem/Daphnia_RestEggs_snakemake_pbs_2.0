@@ -56,10 +56,10 @@ if os.path.isfile("depth/stats/depthFilter.list"):
 else:
   print ("Depth file does not exist")
 
-sets=['ALL', 'LC', 'LC_REF', 'LC_withoutREF']
+sets=['LC_REF', 'LC_withoutREF']
 
-GL = ['2', '2', '2', '2']
-minMaf = ['0.05', '0.05', '0.05', '0.05']
+GL = ['2', '2']
+minMaf = ['0.05', '0.05']
 
 #filters = list(zip(sets, GL[1], minMaf[1], N, MinDepth, MaxDepth))
 
@@ -82,6 +82,9 @@ admix_K = ['2', '3', '4', '5', '6']
 
 POP = ['longispina_March21', 'longispina_June21']
 
+pop_pair = pd.read_csv("list/pop_list/pop_pairs.list", sep='\t', index_col=False)
+POP1 = list(pop_pair['POP1'])
+POP2 = list(pop_pair['POP2'])
 
 # load new sample info from metadata
 #samples = pd.read_csv("list/samples184_metadata.tsv", sep='\t', index_col=False)

@@ -1,0 +1,11 @@
+POP1	POP2
+PRE_long	POST_long_LC
+PRE_long	REF_long
+PRE_long	REF_cuc
+PRE_long	REF_gal
+POST_long_LC	REF_long
+POST_long_LC	REF_gal
+POST_long_LC	REF_cuc
+REF_long	REF_gal
+REF_long	REF_cuc
+REF_gal	REF_cuc

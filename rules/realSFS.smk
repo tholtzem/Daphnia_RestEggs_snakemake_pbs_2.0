@@ -128,70 +128,70 @@ rule angsd_SAF_df_REF_cuc:
 
 rule onedsfs_folded:
   input:
-    'saf/POPS/{POPS}.GL2.saf.idx.done'
+    'saf/POPS/df_{POPS}.GL2.saf.idx.done'
   output:
-    sfs = 'saf/POPS/{POPS}.GL2.sfs'
+    sfs = 'saf/POPS/df_{POPS}.GL2.sfs'
   log:
-    'log/saf_POPS/{POPS}.sfs.log'
+    'log/saf_POPS/df_{POPS}.sfs.log'
   threads: 12
   message:
     """ Optimize .saf.idx and calculate all pairwise 2dsfs's (joint site frequency spectra) using realSFS and fold for theta estimates"""
   shell:
     """
     module load angsd/0.938
-    /apps/uibk/bin/sysconfcpus -n 12 realSFS saf/POPS/{wildcards.POPS}.GL2.saf.idx -fold 1 > {output.sfs} 2> {log}
+    /apps/uibk/bin/sysconfcpus -n 12 realSFS saf/POPS/df_{wildcards.POPS}.GL2.saf.idx -fold 1 > {output.sfs} 2> {log}
     """
 
 
 rule sfs2theta:
   input:
-    'saf/POPS/{POPS}.GL2.saf.idx.done',
-    sfs = 'saf/POPS/{POPS}.GL2.sfs'
+    'saf/POPS/df_{POPS}.GL2.saf.idx.done',
+    sfs = 'saf/POPS/df_{POPS}.GL2.sfs'
   output:
-    'saf/POPS/{POPS}.sfs2theta.done'
+    'saf/POPS/df_{POPS}.sfs2theta.done'
   log:
-    'log/saf_POPS/{POPS}.sfs2theta.log'
+    'log/saf_POPS/df_{POPS}.sfs2theta.log'
   threads: 12
   message:
     """ calculate theta estimates for each site """
   shell:
     """
     module load angsd/0.938
-    /apps/uibk/bin/sysconfcpus -n 12 realSFS saf2theta saf/POPS/{wildcards.POPS}.GL2.safidx -sfs {input.sfs} -outname saf/POPS/{wildcards.POPS} > {output} 2> {log}
+    /apps/uibk/bin/sysconfcpus -n 12 realSFS saf2theta saf/POPS/df_{wildcards.POPS}.GL2.saf.idx -sfs {input.sfs} -outname saf/POPS/df_{wildcards.POPS} > {output} 2> {log}
     """
 
 
 rule theta_stat_chrom:
   input:
-    'saf/POPS/{POPS}.sfs2theta.done'
+    'saf/POPS/df_{POPS}.sfs2theta.done'
   output:
-    touch('saf/POPS/{POPS}.theta_stats_chrom.done')
+    touch('saf/POPS/df_{POPS}.theta_stats_chrom.done')
   log:
-    'log/saf_POPS/{POPS}.theta_stats_chrom.log'
+    'log/saf_POPS/df_{POPS}.theta_stats_chrom.log'
   threads: 12
   message:
     """ Estimate Tajimas D and other statistics """
   shell:
     """
     module load angsd/0.938
-    /apps/uibk/bin/sysconfcpus -n 12 thetaStat do_stat saf/POPS/{wildcards.POPS}.thetas.idx 2> {log}
+    /apps/uibk/bin/sysconfcpus -n 12 thetaStat do_stat saf/POPS/df_{wildcards.POPS}.thetas.idx 2> {log}
     """
 
 
 rule theta_stat_SW:
   input:
-    'saf/POPS/{POPS}.sfs2theta.done'
+    'saf/POPS/df_{POPS}.sfs2theta.done'
   output:
-    touch('saf/POPS/{POPS}.theta_stats_SW.done')
+    'saf/POPS/df_{POPS}.theta.thetasWindow10kb.gz'
   log:
-    'log/saf_POPS/{POPS}.theta_stats_SW.log'
+    'log/saf_POPS/df_{POPS}.theta.thetasWindow10kb.log'
   threads: 12
   message:
     """ Estimate Tajimas D and other statistics using a sliding window analysis """
   shell:
     """
     module load angsd/0.938
-    /apps/uibk/bin/sysconfcpus -n 12 thetaStat do_stat saf/POPS/{wildcards.POPS}.thetas.idx -win 10000 -step 1000 -outnames saf/POPS/{wildcards.POPS}.theta.thetasWindow.gz 2> {log}
+    /apps/uibk/bin/sysconfcpus -n 12 thetaStat do_stat saf/POPS/df_{wildcards.POPS}.thetas.idx -win 10000 -step 1000 -outnames {output} 2> {log}
     """
 
 
@@ -202,14 +202,14 @@ rule twodsfs_folded:
   output:
     pop_pair = 'saf/POPS/{POP1}_vs_{POP2}_2D.sfs'
   log:
-    pop_pair = 'log/saf_POPS/{POP1}_vs_{POP2}_2D.sfs'
+    pop_pair = 'log/saf_POPS/{POP1}_vs_{POP2}_2D.sfs.log'
   threads: 12
   message:
     """ Optimize .saf.idx and calculate all pairwise 2dsfs's (joint site frequency spectra) using realSFS and fold for FST """
   shell:
     """
     module load angsd/0.938
-    /apps/uibk/bin/sysconfcpus -n 12 realSFS saf/POPS/{wildcards.POP1}.GL2.saf.idx saf/POPS/{wildcards.POP2}.GL2.saf.idx -fold 1 > {output.pop_pair} 2> {log.pop_pair}
+    /apps/uibk/bin/sysconfcpus -n 12 realSFS saf/POPS/df_{wildcards.POP1}.GL2.saf.idx saf/POPS/df_{wildcards.POP2}.GL2.saf.idx -fold 1 > {output.pop_pair} 2> {log.pop_pair}
     """
 
 
@@ -221,14 +221,14 @@ rule Fst_index:
   output:
     pop_pair = touch('saf/POPS/{POP1}_vs_{POP2}.FstIndex.done')
   log:
-    pop1_pop2 = 'log/saf_POPS/{POP1}_vs_{POP2}.FstIndex.log'
+    pop_pair = 'log/saf_POPS/{POP1}_vs_{POP2}.FstIndex.log'
   threads: 12
   message:
     """ Index fst for easy window analysis """
   shell:
     """
     module load angsd/0.938
-    /apps/uibk/bin/sysconfcpus -n 12 realSFS fst index saf/POPS/{wildcards.POP1}.GL2.saf.idx saf/POPS/{wildcards.POP2}.GL2.saf.idx -sfs {input.pop_pair} -fstout saf/POPS/{wildcards.POP1}_vs_{wildcards.POP2} 2> {log.pop1_pop2}
+    /apps/uibk/bin/sysconfcpus -n 12 realSFS fst index saf/POPS/df_{wildcards.POP1}.GL2.saf.idx saf/POPS/df_{wildcards.POP2}.GL2.saf.idx -sfs {input.pop_pair} -fstout saf/POPS/{wildcards.POP1}_vs_{wildcards.POP2} 2> {log.pop_pair}
     """
 
 
@@ -245,7 +245,7 @@ rule Fst_global:
   shell:
     """
     module load angsd/0.938
-    /apps/uibk/bin/sysconfcpus -n 12 realSFS fst stats saf/POPS/{wildcards.POP1}_vs_{wildcards.POP2}.fst.idx > saf/POPS/{wildcards.POP1}_vs_{wildcards.POP2}.fst.global 2> {log.pop1_pop2}
+    /apps/uibk/bin/sysconfcpus -n 12 realSFS fst stats saf/POPS/{wildcards.POP1}_vs_{wildcards.POP2}.fst.idx > saf/POPS/{wildcards.POP1}_vs_{wildcards.POP2}.fst.global 2> {log.pop_pair}
     """
 
 
