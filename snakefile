@@ -61,7 +61,7 @@ rule all:
 		expand('saf/POPS/df_{POPS}.{ext}', POPS=['REF_long', 'REF_gal', 'REF_cuc', 'PRE_long', 'POST_long_LC'], ext=['GL2.sfs']),
                 expand('saf/POPS/df_{POPS}.{ext}', POPS=['REF_long', 'REF_gal', 'REF_cuc', 'PRE_long', 'POST_long_LC'], ext=['sfs2theta.done']),
                 expand('saf/POPS/df_{POPS}.{ext}', POPS=['REF_long', 'REF_gal', 'REF_cuc', 'PRE_long', 'POST_long_LC'], ext=['theta_stats_chrom.done']),
-                expand('saf/POPS/df_{POPS}.{ext}', POPS=['REF_long', 'REF_gal', 'REF_cuc', 'PRE_long', 'POST_long_LC'], ext=['theta.thetasWindow10kb.gz']),
+                expand('saf/POPS/df_{POPS}.{ext}', POPS=['REF_long', 'REF_gal', 'REF_cuc', 'PRE_long', 'POST_long_LC'], ext=['theta.thetasWindow10kb.gz.pestPG']),
                 expand('saf/POPS/{POP1}_vs_{POP2}_2D.sfs', zip, POP1=POP1, POP2=POP2),
                 expand('saf/POPS/{POP1}_vs_{POP2}.FstIndex.done', zip, POP1=POP1, POP2=POP2),
                 expand('saf/POPS/{POP1}_vs_{POP2}.Fst_Global.done', zip, POP1=POP1, POP2=POP2)

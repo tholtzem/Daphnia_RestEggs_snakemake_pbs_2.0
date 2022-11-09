@@ -182,7 +182,7 @@ rule theta_stat_SW:
   input:
     'saf/POPS/df_{POPS}.sfs2theta.done'
   output:
-    'saf/POPS/df_{POPS}.theta.thetasWindow10kb.gz'
+    'saf/POPS/df_{POPS}.theta.thetasWindow10kb.gz.pestPG'
   log:
     'log/saf_POPS/df_{POPS}.theta.thetasWindow10kb.log'
   threads: 12
@@ -253,7 +253,7 @@ rule Fst_windows:
   input:
     pop_pair = 'saf/POPS/{POP1}_vs_{POP2}.Fst_Global.done'
   output:
-    pop_pair = touch('saf/POPS/{POP1}_vs_{POP2}.Fst_Windows.done'),
+    pop_pair = touch('saf/POPS/{POP1}_vs_{POP2}.Fst_Windows.done')
   log:
     pop_pair = 'log/saf_POPS/{POP1}_vs_{POP2}.Fst_Windows.log'
   threads: 12
