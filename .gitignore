@@ -25,7 +25,6 @@ trm/qc/multiqc/*
 *.npy
 *.beagle.gz
 *.mafs.gz
-*.R*
 *.snakemake/
 *stats*
 *hist*
