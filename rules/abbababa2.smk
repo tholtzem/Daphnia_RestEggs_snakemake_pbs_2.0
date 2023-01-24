@@ -1,40 +1,5 @@
-# Here, we use the list of LD-pruned SNPs, we called/calculated from GLs of the entire D.lgc-complex (including reference panel, resting eggs and pelagial). This set should explain the variation in our data from the D.lgc-complex. Then, we add the outgroup to the data set, and call SNPs from GLs, but only for those sites present in the D. lgc-complex.
+# Here, we use the global list of SNPs, we called/calculated from GLs of the entire D.lgc-complex (including reference panel, resting eggs and pelagial). This set should explain the variation in our data from the D.lgc-complex. Then, we add the outgroup to the data set, and call SNPs from GLs, but only for those sites present in the D. lgc-complex.
 
-
-#rule do_fasta:
-#  input:
-#    'realigned/{sample}.realigned.bam'
-#  output:
-#    'abbababa/perfect.sample{sample}.fa.fai'
-#  log:
-#    'log/abbababa/perfect.sample{sample}.fa.fai.log'
-#  threads: 24
-#  message:
-#    """ Generate a fasta file for one of the bam file in our data. We assume such a genome has very high quality and we can use it as a reference for estimating error rates in others of our data. """
-#  shell:
-#    """
-#    module load angsd/0.938
-#    /apps/uibk/bin/sysconfcpus -n 24 angsd -i {input} -doFasta 1 -doCounts 1 -out abbababa/perfectSample{sample} &&
-#    gunzip abbababa/perfectSample{sample}.fa.gz &&
-#    samtools faidx perfect.sample{sample}.fa 2> {log}
-#    """
-
-
-#rule AncError:
-#  input:
-#    'list/pop_list/df_PRE_long.txt' 
-#  output:
-#    'abbababa/perfect.sample{sample}.fa.fai'
-#  log:
-#    'log/abbababa/perfect.sample{sample}.fa.fai.log'
-#  threads: 12
-#  message:
-#    """ We apply error correction to the PRE-eutrophication group (which might be affected by transition error) using "perfectSampleCEU" as high-quality reference genome. """
-#  shell:
-#    """
-#    module load angsd/0.938
-#    /apps/uibk/bin/sysconfcpus -n 12 angsd -doAncError 1 -anc chimpHg19.fa -ref perfectSampleCEU.fa -out errorFile -bam bamWithErrors.filelist 2> {log}
-#    """
 
 localrules: all, prepare_bamlist, prepare_sizefile, create_errorFile, get_popNames
 
@@ -75,7 +40,7 @@ rule prepare_sizefile:
     'log/abbababa/4pop_combinations.sizefile.log'
   threads: 12
   message:
-    """ Prepare list of bam files required for the ABBA-BABA test (D-statistic) """
+    """ Prepare a size file (number of bam/individuals in group) required for the ABBA-BABA test (D-statistic) """
   shell:
     """
     Lines=$(cat {input} | tail -n +2)
@@ -104,9 +69,6 @@ rule ABBA_BABA:
     'list/abbababa/4pop_combinations.bam.list.done',
     'list/abbababa/4pop_combinations.sizefile.done',
     ref = config["ref_rapid"],
-    #bamlist = 'list/abbababa/{combi}.bam.list',
-    #popsize = 'list/abbababa/{combi}.sizefile.list',
-    #sites = 'ngsLD/LC_REF/LDpruned_snps_angsd_GL2_minInd221_maf0.05_minDepth221_maxDepth10006.list',
     sites = 'angsd/LC_REF/angsd_GL2_minInd221_maf0.05_minDepth221_maxDepth10006_globalSNP.list',
     chroms = 'angsd/LC_REF/angsd_GL2_minInd221_maf0.05_minDepth221_maxDepth10006_globalSNP.chr'
   output:
@@ -115,7 +77,7 @@ rule ABBA_BABA:
     'log/abbababa/{combi}.abbababa.log'
   threads: 24
   message:
-    """ Compute ABBA-BABA test (D-statistic) using angsd, allows for multiple individuals in each group """
+    """ Compute ABBA-BABA test (D-statistic) in angsd, using a global SNP list and allowing for multiple individuals in each group """
   shell:
     """
     bamlist=(list/abbababa/{wildcards.combi}.bam.list)
