@@ -1,4 +1,4 @@
-# Note: The estimation of the SFS is a 2-step procedure: first, we generate a ".saf.idx" file (site allele frequency likelihood) using angsd (-anc -doSaf 1), followed by an optimization of the .saf.idx file which will estimate the Site frequency spectrum (SFS) ".sfs" using realSFS.  Folding should now be done in realSFS and not in the saf file generation (-fold 1). 
+# Note: The estimation of the SFS is a 2-step procedure: first, we generate a ".saf.idx" file (site allele frequency likelihood) using angsd (-anc -doSaf 1), followed by an optimization of the .saf.idx file which will estimate the Site frequency spectrum (SFS) ".sfs" using realSFS.  Folding should now be done in realSFS and not in the saf file generation (-fold 1).
 
 rule angsd_saf_samples:
   input:
@@ -30,8 +30,9 @@ rule real_SFS_samples:
     """ Optimize .saf.idx and estimate the site frequency spectrum (SFS) using realSFS and fold (required for the global heterozygosity estimate for single samples) """
   shell:
     """
+    module load singularity/2.x
     module load angsd/0.938
-    /apps/uibk/bin/sysconfcpus -n 12 realSFS saf/saf_samples/{wildcards.sample}.GL2.saf.idx -fold 1 > {output} 2> {log}
+    singularity exec /apps/uibk/angsd/0.938/angsd.sandbox /opt/angsd/misc/realSFS saf/saf_samples/{wildcards.sample}.GL2.saf.idx -fold 1 > {output} 2> {log}
     """
 
 
@@ -138,8 +139,9 @@ rule onedsfs_folded:
     """ Optimize .saf.idx and calculate all pairwise 2dsfs's (joint site frequency spectra) using realSFS and fold for theta estimates"""
   shell:
     """
+    module load singularity/2.x
     module load angsd/0.938
-    /apps/uibk/bin/sysconfcpus -n 12 realSFS saf/POPS/df_{wildcards.POPS}.GL2.saf.idx -fold 1 > {output.sfs} 2> {log}
+    singularity exec /apps/uibk/angsd/0.938/angsd.sandbox /opt/angsd/misc/realSFS saf/POPS/df_{wildcards.POPS}.GL2.saf.idx -fold 1 > {output.sfs} 2> {log}
     """
 
 
@@ -156,8 +158,9 @@ rule sfs2theta:
     """ calculate theta estimates for each site """
   shell:
     """
+    module load singularity/2.x
     module load angsd/0.938
-    /apps/uibk/bin/sysconfcpus -n 12 realSFS saf2theta saf/POPS/df_{wildcards.POPS}.GL2.saf.idx -sfs {input.sfs} -outname saf/POPS/df_{wildcards.POPS} > {output} 2> {log}
+    singularity exec /apps/uibk/angsd/0.938/angsd.sandbox /opt/angsd/misc/realSFS saf2theta saf/POPS/df_{wildcards.POPS}.GL2.saf.idx -sfs {input.sfs} -outname saf/POPS/df_{wildcards.POPS} > {output} 2> {log}
     """
 
 
@@ -173,8 +176,9 @@ rule theta_stat_chrom:
     """ Estimate Tajimas D and other statistics """
   shell:
     """
+    module load singularity/2.x
     module load angsd/0.938
-    /apps/uibk/bin/sysconfcpus -n 12 thetaStat do_stat saf/POPS/df_{wildcards.POPS}.thetas.idx 2> {log}
+    singularity exec /apps/uibk/angsd/0.938/angsd.sandbox /opt/angsd/misc/realSFS thetaStat do_stat saf/POPS/df_{wildcards.POPS}.thetas.idx 2> {log}
     """
 
 
@@ -190,8 +194,9 @@ rule theta_stat_SW:
     """ Estimate Tajimas D and other statistics using a sliding window analysis """
   shell:
     """
+    module load singularity/2.x
     module load angsd/0.938
-    /apps/uibk/bin/sysconfcpus -n 12 thetaStat do_stat saf/POPS/df_{wildcards.POPS}.thetas.idx -win 10000 -step 1000 -outnames {output} 2> {log}
+    singularity exec /apps/uibk/angsd/0.938/angsd.sandbox /opt/angsd/misc/realSFS thetaStat do_stat saf/POPS/df_{wildcards.POPS}.thetas.idx -win 10000 -step 1000 -outnames {output} 2> {log}
     """
 
 
@@ -208,8 +213,9 @@ rule twodsfs_folded:
     """ Optimize .saf.idx and calculate all pairwise 2dsfs's (joint site frequency spectra) using realSFS and fold for FST """
   shell:
     """
+    module load singularity/2.x
     module load angsd/0.938
-    /apps/uibk/bin/sysconfcpus -n 12 realSFS saf/POPS/df_{wildcards.POP1}.GL2.saf.idx saf/POPS/df_{wildcards.POP2}.GL2.saf.idx -fold 1 > {output.pop_pair} 2> {log.pop_pair}
+    singularity exec /apps/uibk/angsd/0.938/angsd.sandbox /opt/angsd/misc/realSFS saf/POPS/df_{wildcards.POP1}.GL2.saf.idx saf/POPS/df_{wildcards.POP2}.GL2.saf.idx -fold 1 > {output.pop_pair} 2> {log.pop_pair}
     """
 
 
@@ -227,8 +233,9 @@ rule Fst_index:
     """ Index fst for easy window analysis """
   shell:
     """
+    module load singularity/2.x
     module load angsd/0.938
-    /apps/uibk/bin/sysconfcpus -n 12 realSFS fst index saf/POPS/df_{wildcards.POP1}.GL2.saf.idx saf/POPS/df_{wildcards.POP2}.GL2.saf.idx -sfs {input.pop_pair} -fstout saf/POPS/{wildcards.POP1}_vs_{wildcards.POP2} 2> {log.pop_pair}
+    singularity exec /apps/uibk/angsd/0.938/angsd.sandbox /opt/angsd/misc/realSFS fst index saf/POPS/df_{wildcards.POP1}.GL2.saf.idx saf/POPS/df_{wildcards.POP2}.GL2.saf.idx -sfs {input.pop_pair} -fstout saf/POPS/{wildcards.POP1}_vs_{wildcards.POP2} 2> {log.pop_pair}
     """
 
 
@@ -244,8 +251,9 @@ rule Fst_global:
     """ Get the global Fst estimate """
   shell:
     """
+    module load singularity/2.x
     module load angsd/0.938
-    /apps/uibk/bin/sysconfcpus -n 12 realSFS fst stats saf/POPS/{wildcards.POP1}_vs_{wildcards.POP2}.fst.idx > saf/POPS/{wildcards.POP1}_vs_{wildcards.POP2}.fst.global 2> {log.pop_pair}
+    singularity exec /apps/uibk/angsd/0.938/angsd.sandbox /opt/angsd/misc/realSFS fst stats saf/POPS/{wildcards.POP1}_vs_{wildcards.POP2}.fst.idx > saf/POPS/{wildcards.POP1}_vs_{wildcards.POP2}.fst.global 2> {log.pop_pair}
     """
 
 
@@ -261,8 +269,9 @@ rule Fst_windows:
     """ Get the Fst estimates per window """
   shell:
     """
+    module load singularity/2.x
     module load angsd/0.938
-    /apps/uibk/bin/sysconfcpus -n 12 realSFS fst stats2 saf/POPS/{wildcards.POP1}_vs_{wildcards.POP2}.fst.idx -win 10000 -step 1000 > saf/POPS/{wildcards.POP1}_vs_{wildcards.POP2}.fst.sliding.windows.txt 2> {log.pop_pair}
+    singularity exec /apps/uibk/angsd/0.938/angsd.sandbox /opt/angsd/misc/realSFS realSFS fst stats2 saf/POPS/{wildcards.POP1}_vs_{wildcards.POP2}.fst.idx -win 10000 -step 1000 > saf/POPS/{wildcards.POP1}_vs_{wildcards.POP2}.fst.sliding.windows.txt 2> {log.pop_pair}
     """
 
 #rule plotHeterozygosity_samples:
