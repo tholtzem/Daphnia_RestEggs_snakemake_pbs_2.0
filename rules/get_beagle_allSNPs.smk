@@ -1,7 +1,8 @@
 rule get_beagle_allSNPs:
   input:
-    ref = config["ref_rapid"],
-    bamlist = 'depth/stats/{sets}_realignedBAM_df1.list'
+    ref = config["ref_HiC"],
+    bamlist = 'depth/stats/{sets}_realignedBAM_df1.list',
+    depthFilter = 'depth/stats/depthFilter.list'
   output:
     touch('angsd/{sets}/angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.done')
   log: 'log/{sets}/angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.log'

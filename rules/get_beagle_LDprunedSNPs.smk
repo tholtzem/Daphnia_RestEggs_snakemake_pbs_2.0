@@ -1,13 +1,13 @@
-rule angsd_index_sites:
+rule index_LDpruned_sites:
   input:
-    'ngsLD/{sets}/LDpruned_snps_angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.list'
+    'ngsLD/{sets}/LDpruned_snps_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.list'
   output:
     touch('ngsLD/{sets}/index_SNPs_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.done')
   log:
     'log/{sets}/index_SNPs_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.log'
   threads: 12
   message:
-    """ Index SNP list using angsd """
+    """ Index LDpruned SNP list using angsd """
   shell:
     """
     module load angsd/0.938
@@ -18,17 +18,17 @@ rule angsd_index_sites:
 
 rule getChrom_from_sites:
   input:
-    'ngsLD/{sets}/LDpruned_snps_angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.list',
+    'ngsLD/{sets}/LDpruned_snps_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.list',
     'ngsLD/{sets}/index_SNPs_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.done'
   output:
-    'ngsLD/{sets}/LDpruned_snps_angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.chr'
+    'ngsLD/{sets}/LDpruned_snps_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.chr'
   log:
     'log/{sets}/getChrom_from_LDpruned_snps_angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.log'
   message:
     """ Get a list of chromosomes/scaffolds """
   shell:
     """
-     cut -f1 {input} | sort | uniq > {output}
+     cut -f1 {input} | uniq > {output}
     """
 
 
@@ -47,11 +47,11 @@ rule getChrom_from_sites:
 
 rule getbeagle_LDpruned:
   input:
-    ref = config["ref_rapid"],
+    ref = config["ref_HiC"],
     bamlist = 'depth/stats/{sets}_realignedBAM_df1.list',
     touched = 'ngsLD/{sets}/index_SNPs_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.done',
-    sites = 'ngsLD/{sets}/LDpruned_snps_angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.list',
-    chroms = 'ngsLD/{sets}/LDpruned_snps_angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.chr'
+    sites = 'ngsLD/{sets}/LDpruned_snps_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.list',
+    chroms = 'ngsLD/{sets}/LDpruned_snps_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.chr'
   output:
     touch('angsd/{sets}/LDpruned_angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.done')
   log:

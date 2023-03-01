@@ -20,11 +20,18 @@ samples_set = zip(sample_names, sample_dir)
 samples_dict = dict(zip(sample_names, sample_dir))
 
 # load sample info from reference clone files
-samples_ALL = pd.read_csv("list/Da_Resteggs_metadata_cleaned_NEW.csv", sep='\t', index_col=False)
-refclones = samples_ALL[samples_ALL['period']=='REF']
+samples_ALL = pd.read_csv("list/Da_Resteggs_Refclones_metadata.csv", sep='\t', index_col=False)
+# extract ref clones, except outgroup
+refclones = samples_ALL[(samples_ALL['period']=='REF') & (samples_ALL['species']!='curvirostris')]
 refclone_names = list(refclones['prefix'])
-# load sample info from duplicate removed bam files 
-ALL_names = list(samples_ALL['prefix'])
+# load sample prefix from duplicate removed bam files, except outgroup 
+Dlgc = samples_ALL[samples_ALL['species']!='curvirostris']
+Dlgc_names = list(Dlgc['prefix'])
+# ougroup info
+outgroup = samples_ALL[samples_ALL['species']=='curvirostris']
+outgroup_names = list(outgroup['prefix'])
+
+
 
 # load sample info from metadata
 #samples253_new = pd.read_csv("samples253_metadata.txt", sep='\t', index_col=False)
@@ -45,21 +52,25 @@ ALL_names = list(samples_ALL['prefix'])
 if os.path.isfile("depth/stats/depthFilter.list"):
   print ("Depth filter file exists")
   depth_information = pd.read_csv("depth/stats/depthFilter.list", sep='\t')
+  depth_structure = depth_information[(depth_information['pops']=='LC') | (depth_information['pops']=='LZ') | (depth_information['pops']=='LCwithoutREF') | (depth_information['pops']=='LZwithoutREF')]
 
   # number of samples (individuals)
   N = list(depth_information['Number_of_samples'])
+  N_structure = list(depth_structure['Number_of_samples'])
   # minimum depth over all samples: 1 x number of samples
   MinDepth = 1*N
+  MinDepth_structure = 1*N_structure
   # maximum over all samples: (mean depth + 3 x standard deviation) x number of samples
   #MaxDepth = int(depth_information['HengLi_max']*N)
   MaxDepth = [int(max) for max in depth_information['HengLi_max']*depth_information['Number_of_samples']]
+  MaxDepth_structure = [int(max) for max in depth_structure['HengLi_max']*depth_structure['Number_of_samples']]
+  sets = list(depth_information['pops'])
+  sets_structure = list(depth_structure['pops'])
 else:
   print ("Depth file does not exist")
 
-sets=['LC_REF', 'LC_withoutREF']
-
-GL = ['2', '2']
-minMaf = ['0.05', '0.05']
+GL_structure = ['2', '2', '2', '2']
+minMaf = ['0.05', '0.05', '0.05', '0.05']
 
 #filters = list(zip(sets, GL[1], minMaf[1], N, MinDepth, MaxDepth))
 

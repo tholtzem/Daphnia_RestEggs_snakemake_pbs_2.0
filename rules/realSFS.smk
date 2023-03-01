@@ -1,44 +1,9 @@
 # Note: The estimation of the SFS is a 2-step procedure: first, we generate a ".saf.idx" file (site allele frequency likelihood) using angsd (-anc -doSaf 1), followed by an optimization of the .saf.idx file which will estimate the Site frequency spectrum (SFS) ".sfs" using realSFS.  Folding should now be done in realSFS and not in the saf file generation (-fold 1).
 
-rule angsd_saf_samples:
-  input:
-    ref = config["ref_rapid"],
-    bam = 'realigned/{sample}.realigned.bam'
-  output:
-    touch('saf/saf_samples/{sample}.GL2.saf.idx.done')
-  log:
-    'log/saf_samples/{sample}.GL2.saf.idx.log'
-  threads: 12
-  message:
-    """ Compute site allele frequency likelihood (.saf.idx) for single samples using angsd (required for the global heterozygosity estimate for single samples)"""
-  shell:
-    """
-    module load angsd/0.938
-    /apps/uibk/bin/sysconfcpus -n 12 angsd -i {input.bam} -out saf/saf_samples/{wildcards.sample}.GL2 -anc {input.ref} -ref {input.ref} -doSaf 1 -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minQ 20 -minMapQ 30 -GL 2 2> {log}
-    """
-
-
-rule real_SFS_samples:
-  input:
-    'saf/saf_samples/{sample}.GL2.saf.idx.done'
-  output:
-    'saf/saf_samples/{sample}.GL2.est.ml'
-  log:
-    'log/saf_samples/{sample}.GL2.est.ml.log'
-  threads: 12
-  message:
-    """ Optimize .saf.idx and estimate the site frequency spectrum (SFS) using realSFS and fold (required for the global heterozygosity estimate for single samples) """
-  shell:
-    """
-    module load singularity/2.x
-    module load angsd/0.938
-    singularity exec /apps/uibk/angsd/0.938/angsd.sandbox /opt/angsd/misc/realSFS saf/saf_samples/{wildcards.sample}.GL2.saf.idx -fold 1 > {output} 2> {log}
-    """
-
 
 rule angsd_SAF_PRE_LONG:
   input:
-    ref = config["ref_rapid"],
+    ref = config["ref_HiC"],
     bamlist = 'list/pop_list/df_PRE_long.txt'
   output:
     touch('saf/POPS/df_PRE_long.GL2.saf.idx.done')
@@ -305,6 +270,39 @@ rule Fst_windows:
 #    """
 #   Rscript scripts/plotHeterozygosity.R {input} {output} 2> {log}
 #    """
-
-
-
+#
+#
+#rule angsd_saf_samples:
+#  input:
+#    ref = config["ref_rapid"],
+#    bam = 'realigned/{sample}.realigned.bam'
+#  output:
+#    touch('saf/saf_samples/{sample}.GL2.saf.idx.done')
+#  log:
+#    'log/saf_samples/{sample}.GL2.saf.idx.log'
+#  threads: 12
+#  message:
+#    """ Compute site allele frequency likelihood (.saf.idx) for single samples using angsd (required for the global heterozygosity estimate for single samples)"""
+#  shell:
+#    """
+#    module load angsd/0.938
+#    /apps/uibk/bin/sysconfcpus -n 12 angsd -i {input.bam} -out saf/saf_samples/{wildcards.sample}.GL2 -anc {input.ref} -ref {input.ref} -doSaf 1 -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minQ 20 -minMapQ 30 -GL 2 2> {log}
+#    """
+#
+#
+#rule real_SFS_samples:
+#  input:
+#    'saf/saf_samples/{sample}.GL2.saf.idx.done'
+#  output:
+#    'saf/saf_samples/{sample}.GL2.est.ml'
+#  log:
+#    'log/saf_samples/{sample}.GL2.est.ml.log'
+#  threads: 12
+#  message:
+#    """ Optimize .saf.idx and estimate the site frequency spectrum (SFS) using realSFS and fold (required for the global heterozygosity estimate for single samples) """
+#  shell:
+#    """
+#    module load singularity/2.x
+#    module load angsd/0.938
+#    singularity exec /apps/uibk/angsd/0.938/angsd.sandbox /opt/angsd/misc/realSFS saf/saf_samples/{wildcards.sample}.GL2.saf.idx -fold 1 > {output} 2> {log}
+#    """

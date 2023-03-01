@@ -22,7 +22,7 @@ rule prepare_posFile:
   log: 'log/{sets}/prepare_subposFile_angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.log'
   threads: 12
   message:
-    """ Prepare beagle formatted genotype likelihood file generated from ANGSD (-doGlf 2) by removing the header row and the first three columns (i.e. positions, major allele, minor allele) """
+    """ Prepare position file generated from ANGSD (-doGlf 2) by removing the header row and the first three columns (i.e. positions, major allele, minor allele) """
   shell:
     """
     zcat angsd/{wildcards.sets}/angsd_GL{wildcards.GL}_minInd{wildcards.IND}_maf{wildcards.minMaf}_minDepth{wildcards.MinDepth}_maxDepth{wildcards.MaxDepth}.mafs.gz | cut -f 1,2 |  awk 'NR != 1' | awk 'NR % 50 == 0' | sed 's/:/_/g'| gzip > {output}
@@ -34,7 +34,7 @@ rule run_ngsLD:
    position = 'ngsLD/{sets}/angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}_sub_pos.gz',
    geno = 'ngsLD/{sets}/angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}_sub_geno.beagle.gz'
   output:
-    'ngsLD/{sets}/angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}_sub.ld.gz'
+    'ngsLD/{sets}/run_ngsLD_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}_sub.ld.gz'
   log: 'log/{sets}/run_ngsLD_angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.log'
   threads: 36
   message:
@@ -49,11 +49,10 @@ rule run_ngsLD:
 
 rule run_LDpruning:
   input:
-   'ngsLD/{sets}/angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}_sub.ld.gz'
+    'ngsLD/{sets}/run_ngsLD_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}_sub.ld.gz'
   output:
-   touch('ngsLD/{sets}/run_LDpruning_angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.done')
-   #excl = 'ngsLD/{sets}/angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}_sub_excluded_nodes.csv'
-  log: 'log/{sets}/LD_pruned_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.log'
+   touch('ngsLD/{sets}/run_LDpruning_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.done')
+  log: 'log/{sets}/run_LDpruning_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.log'
   threads: 12
   message:
     """ Prune your data, remove SNPs with high LD """
@@ -66,11 +65,9 @@ rule run_LDpruning:
 
 rule LDpruned_SNPlist:
   input:
-    touched = 'ngsLD/{sets}/run_LDpruning_angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.done'#,
-    #arg1 = 'ngsLD/{sets}/angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}_sub_unlinked.id',
-    #arg2 = 'angsd/{sets}/angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.mafs.gz'
+    touched = 'ngsLD/{sets}/run_LDpruning_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.done'
   output:
-    arg3 = 'ngsLD/{sets}/LDpruned_snps_angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.list'  
+    arg3 = 'ngsLD/{sets}/LDpruned_snps_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.list'  
   log: 'log/{sets}/LDpruned_SNPlist_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.log'
   message:
     """ Make a list of LDpruned SNPs in R and index SNP list """
@@ -78,3 +75,20 @@ rule LDpruned_SNPlist:
     """
     Rscript scripts/getLDpruned_SNPlist.R ngsLD/{wildcards.sets}/angsd_GL{wildcards.GL}_minInd{wildcards.IND}_maf{wildcards.minMaf}_minDepth{wildcards.MinDepth}_maxDepth{wildcards.MaxDepth}_sub_unlinked.id angsd/{wildcards.sets}/angsd_GL{wildcards.GL}_minInd{wildcards.IND}_maf{wildcards.minMaf}_minDepth{wildcards.MinDepth}_maxDepth{wildcards.MaxDepth}.mafs.gz {output.arg3} 2> {log}
     """
+
+
+#rule LDblocks:
+#  input:
+#   'ngsLD/{sets}/angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}_sub.ld.gz'
+#  output:
+#   touch('ngsLD/{sets}/run_LDpruning_angsd_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.done')
+#  log: 'log/{sets}/LD_pruned_GL{GL}_minInd{IND}_maf{minMaf}_minDepth{MinDepth}_maxDepth{MaxDepth}.log'
+#  threads: 12
+#  message:
+#    """ Prune your data, remove SNPs with high LD """
+#  shell:
+#    """
+#    module load singularity/2.x
+#    zcat {input} | singularity exec /apps/uibk/ngsld/1.1.1/ngsLD.sandbox /opt/ngsLD/scripts/prune_graph.pl --max_kb_dist 2000 --min_weight 0.5 --out ngsLD/{wildcards.sets}/angsd_GL{wildcards.GL}_minInd{wildcards.IND}_maf{wildcards.minMaf}_minDepth{wildcards.MinDepth}_maxDepth{wildcards.MaxDepth}_sub_unlinked.id --print_excl ngsLD/{wildcards.sets}/angsd_GL{wildcards.GL}_minInd{wildcards.IND}_maf{wildcards.minMaf}_minDepth{wildcards.MinDepth}_maxDepth{wildcards.MaxDepth}_sub_excluded_nodes.csv
+#    """
+
