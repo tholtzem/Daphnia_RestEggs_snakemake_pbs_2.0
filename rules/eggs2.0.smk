@@ -191,103 +191,116 @@ rule bb_refIndex:
     """
 
 
-rule bbmap:
+#rule bbmap:
+#  input:
+#    kraken_r1 = lambda wildcards: getKrakenHome(wildcards.sample)[0],
+#    kraken_r2 = lambda wildcards: getKrakenHome(wildcards.sample)[1],
+#    ref = config['ref_HiC'],
+#    idx = 'ref/bb_indexRef.done',
+#    SAMPLETABLE = 'list/da_eggs_hatchlings_pelagial_metadata.csv'
+#  output:
+#    bam = 'bbmap/{sample}.bam',
+ #   bhist = 'bbmap/stats/bhist/{sample}.bhist.txt',
+ #   qhist = 'bbmap/qhist/{sample}.qhist.txt',
+ ##   lhist = 'bbmap/lhist/{sample}.lhist.txt',
+ #   covstats = 'bbmap/cov/{sample}.covstats.txt',
+ #   covhist = 'bbmap/cov/{sample}.covhist.txt',
+ #   basecov = 'bbmap/cov/{sample}.basecov.txt',
+ #   bincov = 'bbmap/cov/{sample}.bincov.txt'
+ # log: 'log/bbmap_HiC_{sample}_bam.log' 
+ # threads: 24
+ # message: """ --- Mapping reads to reference genome, convert 2 bam, exclude unmapped reads, only keep reads with minq => 20 --- """
+ # shell:
+ #   """
+ #   id=`echo {input.kraken_r1} | sed -e "s/_R1.trmdfilt.keep.fq.gz$//" | cut -f7 -d '/'`
+ #   echo $id
+ #   
+ #   RG_ID=`grep -P "${{id}}\t" {input.SAMPLETABLE} | cut -f4`
+ #   RG_LB=LIB1of_${{RG_ID}}
+ #   RG_SM=$RG_ID
+ #   RG_PL=ILLUMINA
+ #   RG_PU=LIB1of_${{RG_ID}}
+ #                                   
+ #   echo $RG_ID
+ #   echo $RG_LB
+ #   echo $RG_SM
+ #   echo $RG_PL
+ #   echo $RG_PU
+ #   
+ #   /apps/uibk/bin/sysconfcpus -n 24 bbmap.sh -Xmx200g t={threads} ref={input.ref} in1={input.kraken_r1} in2={input.kraken_r2} out=stdout.sam minid=0.95 k=13 bw=0 ordered=t rgid=$RG_ID rglb=$RG_LB rgsm=$RG_SM rgpl=$RG_PL rgpu=$RG_PU overwrite=f unpigz=t bhist={output.bhist} qhist={output.qhist} lhist={output.lhist} covstats={output.covstats} covhist={output.covhist} basecov={output.basecov} bincov={output.bincov} | samtools view -F 4 -Shu -q 20 | samtools sort - -o {output.bam} 2> {log}
+ #   """
+#
+#
+#rule bamIndex:
+#  input:
+#    'bbmap/{sample}.bam'
+#  output:
+#    'bbmap/{sample}.bam.bai'
+#  threads: 12
+#  log: "log/indexBam_HiC_{sample}.log"
+#  message: """--- Indexing with samtools ---"""
+#  shell:
+#    """
+#    samtools index {input} {output} 2> {log}
+#    """
+#
+#
+#rule remove_duplicates:
+#  input:
+#    bam = "bbmap/{sample}.bam",
+#    bai = "bbmap/{sample}.bam.bai"
+#  output:
+#    deDup = 'deDup/{sample}.dedup.bam',
+#    metrics = 'deDup/{sample}.dedup.metrics.txt'
+#  log: 'log/{sample}.dedup.bam.log'
+#  threads: 12
+#  message: """--- Removing duplicates of bam files with Picard ---"""
+#  shell:
+#    """
+#    /apps/uibk/bin/sysconfcpus -n 12 java -Xmx110g -jar /home/uibk/c7701178/.conda/envs/eggs2.0/share/picard-2.25.0-1/picard.jar MarkDuplicates TMP_DIR=./ MAX_RECORDS_IN_RAM=15000000 REMOVE_DUPLICATES=true ASSUME_SORTED=true VALIDATION_STRINGENCY=SILENT MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=1000 CREATE_INDEX=true INPUT={input.bam} OUTPUT={output.deDup} METRICS_FILE={output.metrics} 2> {log}
+#    """
+#
+#
+#rule clip_overlap:
+#  input:
+#    deDup = 'deDup/{sample}.dedup.bam'
+#  output:
+#    clip = 'deDup/{sample}.overlapclipped.bam' 
+#  log: 'log/{sample}.overlapclipped.bam.log'
+#  threads: 12
+#  message:
+#    """ Clip overlapping paired end reads """
+#  shell:
+#    """
+#    bam clipOverlap --in {input.deDup} --out {output.clip} --stats --poolSize 5000000 2> {log}
+#    """
+
+rule sym_link_REFs:
   input:
-    kraken_r1 = lambda wildcards: getKrakenHome(wildcards.sample)[0],
-    kraken_r2 = lambda wildcards: getKrakenHome(wildcards.sample)[1],
-    ref = config['ref_HiC'],
-    idx = 'ref/bb_indexRef.done',
-    SAMPLETABLE = 'list/da_eggs_hatchlings_pelagial_metadata.csv'
+    '/home/uibk/c7701178/scratch/DAPHNIA/daphnia_snakemake_pbs/deDup/HiC/minid95/{sample}.overlapclipped.bam'
   output:
-    bam = 'bbmap/{sample}.bam',
-    bhist = 'bbmap/stats/bhist/{sample}.bhist.txt',
-    qhist = 'bbmap/qhist/{sample}.qhist.txt',
-    lhist = 'bbmap/lhist/{sample}.lhist.txt',
-    covstats = 'bbmap/cov/{sample}.covstats.txt',
-    covhist = 'bbmap/cov/{sample}.covhist.txt',
-    basecov = 'bbmap/cov/{sample}.basecov.txt',
-    bincov = 'bbmap/cov/{sample}.bincov.txt'
-  log: 'log/bbmap_HiC_{sample}_bam.log' 
-  threads: 24
-  message: """ --- Mapping reads to reference genome, convert 2 bam, exclude unmapped reads, only keep reads with minq => 20 --- """
+    touch('deDup/{sample}.symlink.done')
+  log: 'log/{sample}.symlink.log'
+  message: """--- Create a symlink for clipped REF files ---"""
   shell:
     """
-    id=`echo {input.kraken_r1} | sed -e "s/_R1.trmdfilt.keep.fq.gz$//" | cut -f7 -d '/'`
-    echo $id
-    
-    RG_ID=`grep -P "${{id}}\t" {input.SAMPLETABLE} | cut -f4`
-    RG_LB=LIB1of_${{RG_ID}}
-    RG_SM=$RG_ID
-    RG_PL=ILLUMINA
-    RG_PU=LIB1of_${{RG_ID}}
-                                    
-    echo $RG_ID
-    echo $RG_LB
-    echo $RG_SM
-    echo $RG_PL
-    echo $RG_PU
-    
-    /apps/uibk/bin/sysconfcpus -n 24 bbmap.sh -Xmx200g t={threads} ref={input.ref} in1={input.kraken_r1} in2={input.kraken_r2} out=stdout.sam minid=0.95 k=13 bw=0 ordered=t rgid=$RG_ID rglb=$RG_LB rgsm=$RG_SM rgpl=$RG_PL rgpu=$RG_PU overwrite=f unpigz=t bhist={output.bhist} qhist={output.qhist} lhist={output.lhist} covstats={output.covstats} covhist={output.covhist} basecov={output.basecov} bincov={output.bincov} | samtools view -F 4 -Shu -q 20 | samtools sort - -o {output.bam} 2> {log}
+    ln -s {input} deDup/{wildcards.sample}.overlapclipped.bam 2> {log}
     """
 
-
-rule bamIndex:
-  input:
-    'bbmap/{sample}.bam'
-  output:
-    'bbmap/{sample}.bam.bai'
-  threads: 12
-  log: "log/indexBam_HiC_{sample}.log"
-  message: """--- Indexing with samtools ---"""
-  shell:
-    """
-    samtools index {input} {output} 2> {log}
-    """
-
-
-rule remove_duplicates:
-  input:
-    bam = "bbmap/{sample}.bam",
-    bai = "bbmap/{sample}.bam.bai"
-  output:
-    deDup = 'deDup/{sample}.dedup.bam',
-    metrics = 'deDup/{sample}.dedup.metrics.txt'
-  log: 'log/{sample}.dedup.bam.log'
-  threads: 12
-  message: """--- Removing duplicates of bam files with Picard ---"""
-  shell:
-    """
-    /apps/uibk/bin/sysconfcpus -n 12 java -Xmx110g -jar /home/uibk/c7701178/.conda/envs/eggs2.0/share/picard-2.25.0-1/picard.jar MarkDuplicates TMP_DIR=./ MAX_RECORDS_IN_RAM=15000000 REMOVE_DUPLICATES=true ASSUME_SORTED=true VALIDATION_STRINGENCY=SILENT MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=1000 CREATE_INDEX=true INPUT={input.bam} OUTPUT={output.deDup} METRICS_FILE={output.metrics} 2> {log}
-    """
-
-
-rule clip_overlap:
-  input:
-    deDup = 'deDup/{sample}.dedup.bam'
-  output:
-    clip = 'deDup/{sample}.overlapclipped.bam' 
-  log: 'log/{sample}.overlapclipped.bam.log'
-  threads: 12
-  message:
-    """ Clip overlapping paired end reads """
-  shell:
-    """
-    bam clipOverlap --in {input.deDup} --out {output.clip} --stats --poolSize 5000000 2> {log}
-    """
-
-
-rule Index_clippedBAM:
-  input:
-    clip = 'deDup/{sample}.overlapclipped.bam'
-  output:
-    idx = 'deDup/{sample}.overlapclipped.bam.bai'
-  log: 'log/{sample}.overlapclipped.bam.log'
-  threads: 2
-  message: """--- Indexing clipped BAM files with samtools ---"""
-  shell:
-    """
-    samtools index {input.clip} {output.idx} 2> {log}
-    """
+#
+#rule Index_clippedBAM:
+#  input:
+#    clip = 'deDup/{sample}.overlapclipped.bam'
+#  output:
+#    idx = 'deDup/{sample}.overlapclipped.bam.bai'
+#  log: 'log/{sample}.overlapclipped.bam.log'
+#  threads: 2
+#  message: """--- Indexing clipped BAM files with samtools ---"""
+#  shell:
+#    """
+#    samtools index {input.clip} {output.idx} 2> {log}
+#    """
+#
 
 
 rule refIndex:
@@ -342,12 +355,12 @@ rule ls_ClipBam_REFs:
 
 rule list_indels:
   input:
-    clip = 'list/overlapclippedBAM.list',
+    clip = 'list/overlapclippedBAM_curvi.list',
     ref = config['ref_HiC'],
     idx_ref = "ref/{ref_name}.fasta.fai",
     dict_ref = 'ref/{ref_name}.dict'
   output:
-    'list/indels_{ref_name}.list'
+    'list/indels_{ref_name}_curvi.list'
   log: 'log/listIndels{ref_name}.log'
   threads: 48
   message:
@@ -359,25 +372,12 @@ rule list_indels:
     """
 
 
-rule sym_link_REFs:
-  input:
-    '/home/uibk/c7701178/scratch/DAPHNIA/daphnia_snakemake_pbs/deDup/HiC/minid95/{sample}.overlapclipped.bam'
-  output:
-    touch('deDup/{sample}.symlink.done')
-  log: 'log/{sample}.symlink.log'
-  message: """--- Create a symlink for clipped REF files ---"""
-  shell:
-    """
-    ln -s {input} deDup/{wildcards.sample}.overlapclipped.bam 2> {log}
-    """
-
-
 
 rule realign_indel:
   input:
     clip = 'deDup/{sample}.overlapclipped.bam',
     ref = config['ref_HiC'],
-    indels = 'list/indels_Dgaleata_M5_PBasm.FINAL.list'
+    indels = 'list/indels_Dgaleata_M5_PBasm.FINAL_curvi.list'
   output:
     realigned = 'realigned/{sample}.realigned.bam'
   log: 'log/{sample}.realigned.bam.log'

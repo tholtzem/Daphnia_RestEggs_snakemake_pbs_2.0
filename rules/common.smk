@@ -53,26 +53,32 @@ if os.path.isfile("depth/stats/depthFilter.list"):
   print ("Depth filter file exists")
   depth_information = pd.read_csv("depth/stats/depthFilter.list", sep='\t')
   depth_structure = depth_information[(depth_information['pops']=='LC') | (depth_information['pops']=='LZ') | (depth_information['pops']=='LCwithoutREF') | (depth_information['pops']=='LZwithoutREF')]
+  depth_saf = depth_information[(depth_information['pops']!='LC') & (depth_information['pops']!='LZ') & (depth_information['pops']!='LCwithoutREF') & (depth_information['pops']!='LZwithoutREF')]
+        
 
   # number of samples (individuals)
   N = list(depth_information['Number_of_samples'])
   N_structure = list(depth_structure['Number_of_samples'])
+  N_saf = list(depth_saf['Number_of_samples'])
   # minimum depth over all samples: 1 x number of samples
   MinDepth = 1*N
   MinDepth_structure = 1*N_structure
+  MinDepth_saf = 1*N_saf
   # maximum over all samples: (mean depth + 3 x standard deviation) x number of samples
   #MaxDepth = int(depth_information['HengLi_max']*N)
   MaxDepth = [int(max) for max in depth_information['HengLi_max']*depth_information['Number_of_samples']]
   MaxDepth_structure = [int(max) for max in depth_structure['HengLi_max']*depth_structure['Number_of_samples']]
+  MaxDepth_saf = [int(max) for max in depth_saf['HengLi_max']*depth_saf['Number_of_samples']]
+
   sets = list(depth_information['pops'])
   sets_structure = list(depth_structure['pops'])
+  sets_saf = list(depth_saf['pops'])
 else:
   print ("Depth file does not exist")
 
 GL_structure = ['2', '2', '2', '2']
 minMaf = ['0.05', '0.05', '0.05', '0.05']
 
-#filters = list(zip(sets, GL[1], minMaf[1], N, MinDepth, MaxDepth))
 
 ## angsd parameters
 # minor allele frequency for PCA and admixture plots for 1% and 5% of the data
