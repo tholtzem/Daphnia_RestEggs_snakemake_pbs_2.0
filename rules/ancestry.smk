@@ -32,8 +32,7 @@ rule get_fixedSites:
     pop2=$(cat {input.pop2})
     hy=$(cat {input.hybrids})
     ruby scripts/get_fixed_site_gts.rb {input.vcf} {output} $pop1  $hy $pop2 2> {log}
-    """
-
+    """ 
 
 
 rule plot_fixedSites:
@@ -48,6 +47,20 @@ rule plot_fixedSites:
   shell:
     """
     ruby scripts/plot_fixed_site_gts.rb {input} {output} 1.0 1000 2> {log}
+    """
+
+
+rule list_fixedSites:
+  input:
+    'ancestry/fixed_sites.txt'
+  output:
+    'ancestry/fixed_sites.list'
+  log: 'list_fixedSites.log'
+  threads: 12
+  message: """ Reformat list with fixed sites """
+  shell:
+    """
+    cat {input} | grep -e 'HiC_scaffold' | cut -f1,2 > {output}
     """
 
 

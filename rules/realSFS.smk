@@ -93,7 +93,7 @@ rule theta_stat_SW:
   input:
     'saf/POPS/{POPS}_{IND}_{MinDepth}_{MaxDepth}.GL2.sfs2theta.done'
   output:
-    'saf/POPS/{POPS}_{IND}_{MinDepth}_{MaxDepth}.GL2.theta_stats_Window10kb.gz.pestPG'
+    'saf/POPS/{POPS}_{IND}_{MinDepth}_{MaxDepth}.GL2.theta_stats_Window10kb.gz.pestPG.pestPG'
   log:
     'log/saf_POPS/{POPS}_{IND}_{MinDepth}_{MaxDepth}.GL2.theta_stats_Window10kb.log'
   threads: 12

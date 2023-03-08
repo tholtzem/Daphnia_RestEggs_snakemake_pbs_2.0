@@ -361,7 +361,7 @@ rule list_indels:
     dict_ref = 'ref/{ref_name}.dict'
   output:
     'list/indels_{ref_name}_curvi.list'
-  log: 'log/listIndels{ref_name}.log'
+  log: 'log/listIndels{ref_name}_curvi.log'
   threads: 48
   message:
     """ Create list of potential indels """
@@ -378,6 +378,7 @@ rule realign_indel:
     clip = 'deDup/{sample}.overlapclipped.bam',
     ref = config['ref_HiC'],
     indels = 'list/indels_Dgaleata_M5_PBasm.FINAL_curvi.list'
+    #indels = 'list/indels_Dgaleata_M5_PBasm.FINAL.list'
   output:
     realigned = 'realigned/{sample}.realigned.bam'
   log: 'log/{sample}.realigned.bam.log'
@@ -428,16 +429,16 @@ rule ls_depth:
   message: """ --- Creating a sample list of samtools-depth files for Rscript --- """
   shell:
     """
-    ls {input} | cut -f2 -d '/' >> depth/depth.list 2> {log}
+    ls {input} | cut -f2 -d '/' >> depth/depth_curvi.list 2> {log}
     """
 
 
 rule read_depth:
   input:
-    'depth/depth.list'
+    'depth/depth_curvi.list'
   output:
-    'depth/stats/depth_statistics.txt'
-  log: 'log/depth_statistics.log'
+    'depth/stats/depth_statistics_curvi.txt'
+  log: 'log/depth_statistics_curvi.log'
   threads: 12
   message:
     """ --- Running Rscript to plot the genome-wide distribution of coverage --- """
