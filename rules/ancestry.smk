@@ -31,7 +31,7 @@ rule get_fixedSites:
     pop1=$(cat {input.pop1})
     pop2=$(cat {input.pop2})
     hy=$(cat {input.hybrids})
-    ruby scripts/get_fixed_site_gts.rb {input.vcf} {output} $pop1  $hy $pop2 2> {log}
+    ruby scripts/get_fixed_site_gts.rb {input.vcf} {output} $pop1 $hy $pop2 0.8 2> {log}
     """ 
 
 
@@ -46,7 +46,7 @@ rule plot_fixedSites:
   threads: 12
   shell:
     """
-    ruby scripts/plot_fixed_site_gts.rb {input} {output} 1.0 1000 2> {log}
+    ruby scripts/plot_fixed_site_gts.rb {input} {output} 0.8 1000 2> {log}
     """
 
 
