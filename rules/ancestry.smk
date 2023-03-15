@@ -1,52 +1,52 @@
 
-rule newline2csv:
-  input:
-    pops = 'list/pop_list/{pops}.txt'
-  output:
-    pops = 'list/pop_list/{pops}.csv'
-  log: 'log/{pops}_newline2csv.log'
-  threads: 2
-  message: """ Convert newline character separated list to comma separated list """
-  shell:
-    """
-    cat {input.pops} | cut -f1 -d'.' | cut -f2 -d'/' | sed -z 's/\n/,/g;s/,$/\n/' > {output.pops} 2> {log}
-    """
-
+#rule newline2csv:
+#  input:
+#    pops = 'list/pop_list/{pops}.txt'
+#  output:
+#    pops = 'list/pop_list/{pops}.csv'
+#  log: 'log/{pops}_newline2csv.log'
+#  threads: 2
+#  message: """ Convert newline character separated list to comma separated list """
+#  shell:
+#    """
+#    cat {input.pops} | cut -f1 -d'.' | cut -f2 -d'/' | sed -z 's/\n/,/g;s/,$/\n/' > {output.pops} 2> {log}
+#    """
 
 rule get_fixedSites:
   input:
-    vcf = 'ancestry/parents_hybrids.vcf',
+    vcf = 'ancestry/LC/data/{prefix}_hf.DP{genoDP}_vmiss20.vcf',
     pop1 = 'list/pop_list/longispina.csv',
     pop2 = 'list/pop_list/galeata.csv',
-    #pop2 = 'list/pop_list/cucullata.txt',
-    hybrids = 'list/pop_list/hybrids_LC.csv',
+    hybrids = 'list/pop_list/hybrids_LC.csv'
   output:
-    'ancestry/fixed_sites.txt'
+    fixed_sites = 'ancestry/LC/{prefix}_hf.DP{genoDP}_fixed_sites.txt',
+    report = 'ancestry/LC/{prefix}_hf.DP{genoDP}_get_fixedSites_sites.report'
   log:
-    'log/get_fixedSites.log'
-  message: """ --- Run ruby script (https://github.com/mmatschiner/tutorials/blob/master/analysis_of_introgression_with_snp_data/src/get_fixed_site_gts.rhttps://github.com/mmatschiner/tutorials/blob/master/analysis_of_introgression_with_snp_data/src/get_fixed_site_gts.rbb) to get the alleles at sites that are fixed differently in two parental species --- """
+    'log/get_fixedSites_{prefix}_hf.DP{genoDP}_fixed_sites.log'
+  message: """ --- Run ruby script (https://github.com/mmatschiner/tutorials/blob/master/analysis_of_introgression_with_snp_data/src/get_fixed_site_gts.rhttps://github.com/mmatschiner/tutorials/blob/master/analysis_of_introgression_with_snp_data/src/get_fixed_site_gts.rbb) to get the alleles at sites that are fixed differently in two parental species (complete fixation of at least 100% in parental species) --- """
   threads: 12
   shell:
     """
     pop1=$(cat {input.pop1})
     pop2=$(cat {input.pop2})
     hy=$(cat {input.hybrids})
-    ruby scripts/get_fixed_site_gts.rb {input.vcf} {output} $pop1 $hy $pop2 0.8 2> {log}
+    ruby scripts/get_fixed_site_gts.rb {input.vcf} {output.fixed_sites} $pop1 $hy $pop2 1.0 > {output.report} 2> {log}
     """ 
 
 
 rule plot_fixedSites:
   input:
-    'ancestry/fixed_sites.txt'
+    fixed_sites = 'ancestry/LC/{prefix}_hf.DP{genoDP}_fixed_sites.txt',
   output:
-    'ancestry/fixed_sites.svg'
+    svg = 'ancestry/LC/{prefix}_hf.DP{genoDP}_fixed_sites_80percent_thinned1000bp.svg',
+    report = 'ancestry/LC/{prefix}_hf.DP{genoDP}_plot_fixed_sites_80percent_thinned1000bp.report'
   log:
-    'log/plot_fixedSites.log'
-  message: """ --- Run ruby script (https://github.com/mmatschiner/tutorials/blob/master/analysis_of_introgression_with_snp_data/src/get_fixed_site_gts.rhttps://github.com/mmatschiner/tutorials/blob/master/analysis_of_introgression_with_snp_data/src/plot_fixed_site_gts.rbb) to get the alleles at sites that are fixed differently in two parental species --- """
+    'log/plot_fixedSites_{prefix}_hf.DP{genoDP}_fixed_sites_80percent.log'
+  message: """ --- Run ruby script (https://github.com/mmatschiner/tutorials/blob/master/analysis_of_introgression_with_snp_data/src/get_fixed_site_gts.rhttps://github.com/mmatschiner/tutorials/blob/master/analysis_of_introgression_with_snp_data/src/plot_fixed_site_gts.rbb) to get the alleles at sites that are fixed differently in two parental species (complete fixation of 80-100% in all individuals) --- """
   threads: 12
   shell:
     """
-    ruby scripts/plot_fixed_site_gts.rb {input} {output} 0.8 1000 2> {log}
+    ruby scripts/plot_fixed_site_gts.rb {input.fixed_sites} {output.svg} 0.8 1000 | head -n -3 | tail -n+2 | awk -v OFS='\t' '{{$1=$1; print}}' > {output.report} 2> {log}
     """
 
 
